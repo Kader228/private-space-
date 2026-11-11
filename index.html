@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14204a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Nous deux</title>
+<style>
+:root{--bg:#fff;--soft:#fff0f5;--card:#fff;--tx:#14204a;--mut:#6b7499;--pk:#ff6f9f;--pkd:#e14a80;--nv:#14204a;--bd:#f6cfdd;--me:#14204a;--metx:#fff;--ot:#ffe0ea;box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0b12;--soft:#14204a;--card:#161d38;--tx:#fff;--mut:#a7b0d6;--bd:#2b3764;--me:#ff6f9f;--metx:#0b0b12;--ot:#1f2a52}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0)}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--nv);color:#fff}
+header h1{margin:0;font:italic 700 1.4rem Georgia,"Times New Roman",serif}
+header h1 span{color:var(--pk)}
+#who{background:none;border:1px solid #ffffff55;color:#fff;border-radius:20px;padding:5px 12px;font-size:.85rem}
+nav{display:flex;background:var(--soft);border-bottom:1px solid var(--bd)}
+nav button{flex:1;padding:12px 4px;border:0;background:none;color:var(--mut);font-size:.95rem;border-bottom:3px solid transparent}
+nav button.on{color:var(--tx);font-weight:700;border-bottom-color:var(--pk)}
+main{flex:1;min-height:0;position:relative}
+.view{display:none;position:absolute;inset:0;flex-direction:column}
+.view.on{display:flex}
+.scroll{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.b{max-width:80%;padding:8px 12px;border-radius:16px;background:var(--ot);white-space:pre-wrap;word-wrap:break-word}
+.b.me{align-self:flex-end;background:var(--me);color:var(--metx)}
+.b small{display:block;font-size:.7rem;opacity:.75;margin-top:2px}
+.bar,.form{display:flex;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0));border-top:1px solid var(--bd);background:var(--bg)}
+.form{flex-direction:column}
+input,textarea{flex:1;font:inherit;padding:10px 12px;border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);min-width:0}
+.btn{padding:10px 16px;border:0;border-radius:12px;background:var(--pk);color:#14204a;font-weight:700;font-size:1rem}
+.btn.nv{background:var(--nv);color:#fff}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px}
+.card h3{margin:0 0 2px;font:700 1.1rem Georgia,serif}
+.card p{margin:6px 0 0;white-space:pre-wrap}
+.card small,.mut{color:var(--mut)}
+.x{float:right;background:none;border:0;color:var(--mut);font-size:1.1rem}
+.empty{margin:auto;text-align:center;color:var(--mut);padding:20px}
+.sub{display:flex;gap:6px;padding:8px 12px;overflow-x:auto}
+.sub button{white-space:nowrap;padding:8px 14px;border-radius:20px;border:1px solid var(--bd);background:var(--card);color:var(--tx)}
+.sub button.on{background:var(--pk);color:#14204a;border-color:var(--pk);font-weight:700}
+.g{display:none;flex:1;overflow-y:auto;padding:4px 12px 16px;flex-direction:column;gap:10px}
+.g.on{display:flex}
+.opt{display:inline-block;margin:4px 6px 0 0;padding:8px 12px;border-radius:20px;border:1px solid var(--bd);background:var(--card);color:var(--tx)}
+.opt.on{background:var(--nv);color:#fff;border-color:var(--nv)}
+@media (prefers-color-scheme:dark){.opt.on{background:var(--pk);color:#0b0b12;border-color:var(--pk)}}
+.big{font:italic 700 1.3rem/1.35 Georgia,serif;text-align:center;padding:18px 8px}
+.ttt{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:300px;width:100%;margin:0 auto}
+.ttt button{aspect-ratio:1;font-size:2.4rem;font-weight:700;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx)}
+#ov{position:fixed;inset:0;background:var(--nv);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;z-index:9}
+#ov h2{font:italic 700 1.8rem Georgia,serif;margin:0}
+#ov .btn{width:100%;max-width:300px;padding:16px;font-size:1.1rem}
+#st{text-align:center;font-size:.8rem;color:var(--mut);padding:2px}
+</style>
+</head>
+<body>
+<header><h1>Nous <span>deux</span></h1><button id="who"></button></header>
+<nav><button data-v="chat" class="on">💬 Discussion</button><button data-v="mem">📸 Souvenirs</button><button data-v="game">🎲 Jeux</button></nav>
+<div id="st"></div>
+<main>
+ <section class="view on" id="chat">
+  <div class="scroll" id="msgs"></div>
+  <div class="bar"><input id="mi" placeholder="Écris un message…" autocomplete="off"><button class="btn" id="ms">Envoyer</button></div>
+ </section>
+ <section class="view" id="mem">
+  <div class="scroll" id="mems"></div>
+  <div class="form">
+   <input id="mt" placeholder="Titre du souvenir">
+   <input id="md" type="date">
+   <textarea id="mn" rows="2" placeholder="Raconte-le…"></textarea>
+   <button class="btn" id="mb">Ajouter le souvenir</button>
+  </div>
+ </section>
+ <section class="view" id="game">
+  <div class="sub" id="sub">
+   <button data-g="daily" class="on">Question du jour</button><button data-g="quiz">Quiz</button><button data-g="aov">Action ou vérité</button><button data-g="ttt">Morpion</button>
+  </div>
+  <div class="g on" id="daily"></div>
+  <div class="g" id="quiz"></div>
+  <div class="g" id="aov"></div>
+  <div class="g" id="ttt"></div>
+ </section>
+</main>
+<div id="ov"><h2>Qui es-tu ?</h2><p>Choisis une seule fois, tu pourras changer plus tard.</p>
+ <button class="btn" data-r="H">💙 Mon héros</button><button class="btn" data-r="P">💗 Ma princesse</button></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getFirestore,collection,doc,addDoc,setDoc,deleteDoc,onSnapshot,query,orderBy,limit,where} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app=initializeApp({
+  apiKey:"AIzaSyA0N7SvD1Ucd-Vx3Z9dO759Ssli4eK5KT4",
+  authDomain:"private-space-2.firebaseapp.com",
+  projectId:"private-space-2",
+  storageBucket:"private-space-2.firebasestorage.app",
+  messagingSenderId:"91501099044",
+  appId:"1:91501099044:web:d756400067436612fe00b1"
+});
+const db=getFirestore(app);
+const $=i=>document.getElementById(i);
+const NAMES={H:"Mon héros 💙",P:"Ma princesse 💗"};
+const esc=s=>{const d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML};
+const fmt=t=>{const d=new Date(t);return d.toLocaleDateString("fr-FR",{day:"2-digit",month:"short"})+" "+d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})};
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+let role=null;try{role=localStorage.getItem("role")}catch(e){}
+const other=()=>role==="H"?"P":"H";
+const err=m=>{$("st").textContent=m};
+
+/* Qui es-tu */
+function setRole(r){role=r;try{localStorage.setItem("role",r)}catch(e){}$("ov").style.display="none";$("who").textContent=NAMES[r];renderAll()}
+$("ov").onclick=e=>{const r=e.target.getAttribute&&e.target.getAttribute("data-r");if(r)setRole(r)};
+$("who").onclick=()=>{$("ov").style.display="flex"};
+if(!role)$("ov").style.display="flex";else $("who").textContent=NAMES[role];
+
+/* Onglets */
+document.querySelector("nav").onclick=e=>{const v=e.target.getAttribute("data-v");if(!v)return;
+ document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b===e.target));
+ document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id===v))};
+$("sub").onclick=e=>{const g=e.target.getAttribute("data-g");if(!g)return;
+ document.querySelectorAll("#sub button").forEach(b=>b.classList.toggle("on",b===e.target));
+ document.querySelectorAll(".g").forEach(s=>s.classList.toggle("on",s.id===g))};
+
+/* Discussion */
+let msgs=[];
+function drawMsgs(){const el=$("msgs");const bottom=el.scrollHeight-el.scrollTop-el.clientHeight<80;
+ el.innerHTML=msgs.length?msgs.map(m=>'<div class="b'+(m.role===role?" me":"")+'">'+esc(m.text)+'<small>'+(m.role===role?"":NAMES[m.role]+" · ")+fmt(m.ts)+'</small></div>').join(""):'<div class="empty">Aucun message. Écris le premier mot doux 💌</div>';
+ if(bottom||msgs.length<2)el.scrollTop=el.scrollHeight}
+onSnapshot(query(collection(db,"messages"),orderBy("ts"),limit(300)),s=>{err("");msgs=s.docs.map(d=>d.data());drawMsgs()},e=>err("Connexion impossible : vérifie les règles Firestore."));
+async function send(){const v=$("mi").value.trim();if(!v||!role)return;$("mi").value="";
+ try{await addDoc(collection(db,"messages"),{role,text:v,ts:Date.now()})}catch(e){err("Message non envoyé.")}}
+$("ms").onclick=send;$("mi").onkeydown=e=>{if(e.key==="Enter")send()};
+
+/* Souvenirs */
+let mems=[];
+function drawMems(){$("mems").innerHTML=mems.length?mems.map(m=>'<div class="card">'+(m.role===role?'<button class="x" data-id="'+m.id+'" aria-label="Supprimer">✕</button>':"")+'<h3>'+esc(m.title)+'</h3><small>'+esc(m.date)+' · '+NAMES[m.role]+'</small>'+(m.note?'<p>'+esc(m.note)+'</p>':"")+'</div>').join(""):'<div class="empty">Pas encore de souvenir. Ajoute le premier 📸</div>'}
+onSnapshot(query(collection(db,"memories"),orderBy("date","desc"),limit(300)),s=>{mems=s.docs.map(d=>({id:d.id,...d.data()}));drawMems()},()=>{});
+$("md").value=today();
+$("mb").onclick=async()=>{const t=$("mt").value.trim();if(!t||!role)return;
+ try{await addDoc(collection(db,"memories"),{role,title:t,date:$("md").value,note:$("mn").value.trim(),ts:Date.now()});$("mt").value="";$("mn").value=""}catch(e){err("Ajout impossible.")}};
+$("mems").onclick=async e=>{const id=e.target.getAttribute&&e.target.getAttribute("data-id");
+ if(id&&confirm("Supprimer ce souvenir ?"))try{await deleteDoc(doc(db,"memories",id))}catch(x){err("Suppression impossible.")}};
+
+/* Question du jour */
+const QD=["Quel est ton plus beau souvenir avec moi ?","Qu'est-ce qui t'a fait craquer chez moi au début ?","Où aimerais-tu qu'on voyage ensemble ?","Quelle petite attention te fait le plus plaisir ?","Quel est ton plus grand rêve pour nous deux ?","Quelle chanson te fait penser à nous ?","Qu'est-ce que tu aimes le plus dans notre quotidien ?","Quel moment avec moi aimerais-tu revivre ?","Qu'est-ce qui te fait rire chez moi ?","Comment imagines-tu notre rendez-vous idéal ?","De quoi es-tu le plus fier(e) cette année ?","Quelle qualité admires-tu chez moi ?","Quel film aimerais-tu qu'on regarde ensemble ?","Qu'est-ce que tu voudrais qu'on apprenne à faire ensemble ?","Quel est ton souvenir d'enfance préféré ?","Qu'est-ce qui te rassure quand tu es triste ?","Quel mot décrit le mieux notre couple ?","Quelle habitude de moi te fait sourire ?","Que veux-tu qu'on fasse ce week-end ?","Qu'est-ce que tu me souhaites pour cette année ?"];
+let daily={};
+function drawDaily(){const q=QD[Math.floor(Date.now()/864e5)%QD.length];const mine=daily[role],oth=daily[other()];
+ $("daily").innerHTML='<div class="big">'+esc(q)+'</div><textarea id="da" rows="3" placeholder="Ta réponse…">'+esc(mine||"")+'</textarea><button class="btn" id="ds">'+(mine?"Modifier ma réponse":"Envoyer ma réponse")+'</button>'+
+ (mine&&oth?'<div class="card"><small>'+NAMES[other()]+'</small><p>'+esc(oth)+'</p></div>':'<p class="mut" style="text-align:center">'+(mine?"En attente de la réponse de l'autre… 💭":"Réponds pour découvrir la réponse de l'autre.")+'</p>');
+ $("ds").onclick=async()=>{const v=$("da").value.trim();if(!v)return;try{await setDoc(doc(db,"daily",today()+"_"+role),{date:today(),role,answer:v})}catch(e){err("Réponse non envoyée.")}}}
+onSnapshot(query(collection(db,"daily"),where("date","==",today())),s=>{daily={};s.docs.forEach(d=>{const x=d.data();daily[x.role]=x.answer});if(!document.activeElement||document.activeElement.id!=="da")drawDaily()},()=>{});
+
+/* Quiz : qui connaît le mieux l'autre */
+const QZ=[["Boisson préférée ?","Café","Thé","Jus","Soda"],["Saison préférée ?","Printemps","Été","Automne","Hiver"],["Soirée idéale ?","Film à la maison","Restaurant","Sortie entre amis","Balade"],["Vacances rêvées ?","Plage","Montagne","Grande ville","Campagne"],["Plat préféré ?","Pâtes","Riz","Viande grillée","Poisson"],["Tu es plutôt…","Du matin","Du soir","Les deux","Ça dépend"],["Cadeau préféré ?","Un objet","Une sortie","Un message doux","Un repas"],["Ta façon de dire je t'aime ?","Des mots","Des gestes","Des cadeaux","Du temps ensemble"]];
+let quiz={},selS=[],selG=[];
+function pick(arr,i,o){arr[i]=o}
+function qHtml(sel,label){return QZ.map((q,i)=>'<div class="card"><b>'+esc(q[0])+'</b><br><small>'+label+'</small><div>'+q.slice(1).map((o,j)=>'<button class="opt'+(sel[i]===j?" on":"")+'" data-q="'+i+'" data-o="'+j+'">'+esc(o)+'</button>').join("")+'</div></div>').join("")}
+function score(guess,self){return guess.reduce((n,g,i)=>n+(g===self[i]?1:0),0)}
+function drawQuiz(){const me=quiz[role]||{},ot=quiz[other()]||{};let h="";
+ if(!me.self){h='<p class="mut">Étape 1 : réponds pour toi.</p>'+qHtml(selS,"Ta réponse")+'<button class="btn" id="q1">Valider mes réponses</button>'}
+ else if(!ot.self){h='<div class="empty">Tes réponses sont enregistrées ✅<br>Attends que l\'autre réponde à l\'étape 1.</div>'}
+ else if(!me.guess){h='<p class="mut">Étape 2 : devine les réponses de l\'autre.</p>'+qHtml(selG,"Sa réponse selon toi")+'<button class="btn" id="q2">Valider mes devinettes</button>'}
+ else if(!ot.guess){h='<div class="empty">Tes devinettes sont enregistrées ✅<br>Attends que l\'autre termine.</div>'}
+ else{const a=score(me.guess,ot.self),b=score(ot.guess,me.self);
+  h='<div class="big">'+NAMES[role]+' : '+a+'/'+QZ.length+'<br>'+NAMES[other()]+' : '+b+'/'+QZ.length+'</div><p style="text-align:center">'+(a>b?"Tu connais mieux l'autre 😏":a<b?"L'autre te connaît mieux 💕":"Égalité parfaite 💞")+'</p><button class="btn nv" id="qr">Rejouer</button>'}
+ $("quiz").innerHTML=h;
+ if($("q1"))$("q1").onclick=async()=>{if(selS.filter(x=>x!=null).length<QZ.length)return err("Réponds à toutes les questions.");err("");try{await setDoc(doc(db,"quiz",role),{...me,self:selS.slice()});selS=[]}catch(e){err("Erreur d'envoi.")}};
+ if($("q2"))$("q2").onclick=async()=>{if(selG.filter(x=>x!=null).length<QZ.length)return err("Réponds à toutes les questions.");err("");try{await setDoc(doc(db,"quiz",role),{...me,guess:selG.slice()});selG=[]}catch(e){err("Erreur d'envoi.")}};
+ if($("qr"))$("qr").onclick=async()=>{try{await deleteDoc(doc(db,"quiz","H"));await deleteDoc(doc(db,"quiz","P"))}catch(e){err("Erreur.")}}}
+$("quiz").onclick=e=>{const q=e.target.getAttribute&&e.target.getAttribute("data-q");if(q==null)return;
+ const me=quiz[role]||{};const arr=!me.self?selS:selG;arr[+q]=+e.target.getAttribute("data-o");
+ e.target.parentNode.querySelectorAll(".opt").forEach(b=>b.classList.toggle("on",b===e.target))};
+onSnapshot(collection(db,"quiz"),s=>{quiz={};s.docs.forEach(d=>quiz[d.id]=d.data());drawQuiz()},()=>{});
+
+/* Action ou vérité */
+const ACT=["Fais un câlin de 20 secondes.","Envoie un message vocal en chuchotant « je t'aime ».","Fais ton plus beau compliment à l'autre.","Imite l'autre pendant 30 secondes.","Danse sur une chanson choisie par l'autre.","Fais un massage des épaules de 2 minutes.","Écris un petit poème de 2 lignes pour l'autre.","Fais une grimace et prends-toi en photo.","Chante un refrain de ta chanson préférée.","Dis 3 choses que tu adores chez l'autre.","Prépare une boisson pour l'autre.","Donne un surnom ridicule à l'autre pour la journée."];
+const VER=["Quel est ton plus beau souvenir de nous ?","Quelle est ta plus grande peur dans notre couple ?","Qu'as-tu pensé de moi la première fois ?","Quel est ton petit défaut que tu caches ?","Quelle est ta plus grosse bêtise ?","Quand as-tu su que tu m'aimais ?","Quel est ton rêve secret ?","Qu'est-ce qui t'a le plus fait rire chez moi ?","Quelle est la chose que tu n'oses pas me dire ?","Quel cadeau rêves-tu de recevoir ?","Quelle est ta plus grande fierté ?","Qu'est-ce qui te fait le plus craquer chez moi ?"];
+let aov=null;
+function drawAov(){$("aov").innerHTML='<div class="big">'+(aov?'<small class="mut">'+(aov.type==="A"?"ACTION":"VÉRITÉ")+' · '+NAMES[aov.by]+'</small><br>'+esc(aov.text):"Choisis Action ou Vérité 😏")+'</div><div style="display:flex;gap:8px"><button class="btn" id="aa" style="flex:1">Action</button><button class="btn nv" id="av" style="flex:1">Vérité</button></div>';
+ const go=async t=>{const l=t==="A"?ACT:VER;try{await setDoc(doc(db,"game","aov"),{type:t,text:l[Math.floor(Math.random()*l.length)],by:role,ts:Date.now()})}catch(e){err("Erreur.")}};
+ $("aa").onclick=()=>go("A");$("av").onclick=()=>go("V")}
+onSnapshot(doc(db,"game","aov"),s=>{aov=s.exists()?s.data():null;drawAov()},()=>{});
+
+/* Morpion */
+let ttt={b:"         ",t:"H"};
+const LN=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+const win=b=>{for(const[a,c,d]of LN)if(b[a]!==" "&&b[a]===b[c]&&b[a]===b[d])return b[a];return null};
+function drawTtt(){const w=win(ttt.b),full=!ttt.b.includes(" ");
+ const st=w?(w==="X"?NAMES.H:NAMES.P)+" a gagné ! 🎉":full?"Match nul 🤝":(ttt.t===role?"À toi de jouer !":"Au tour de "+NAMES[ttt.t]);
+ $("ttt").innerHTML='<div class="big">'+st+'</div><div class="ttt">'+ttt.b.split("").map((c,i)=>'<button data-c="'+i+'">'+(c===" "?"":c==="X"?"💙":"💗")+'</button>').join("")+'</div><button class="btn nv" id="tr" style="align-self:center">Nouvelle partie</button>';
+ $("tr").onclick=()=>setDoc(doc(db,"game","ttt"),{b:"         ",t:"H"}).catch(()=>err("Erreur."))}
+$("ttt").onclick=async e=>{const c=e.target.getAttribute&&e.target.getAttribute("data-c");if(c==null||!role)return;
+ const i=+c;if(ttt.t!==role||ttt.b[i]!==" "||win(ttt.b))return;
+ const b=ttt.b.slice(0,i)+(role==="H"?"X":"O")+ttt.b.slice(i+1);
+ try{await setDoc(doc(db,"game","ttt"),{b,t:other()})}catch(x){err("Coup non envoyé.")}};
+onSnapshot(doc(db,"game","ttt"),s=>{if(s.exists())ttt=s.data();else ttt={b:"         ",t:"H"};drawTtt()},()=>{});
+
+function renderAll(){drawMsgs();drawMems();drawDaily();drawQuiz();drawAov();drawTtt()}
+renderAll();
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
